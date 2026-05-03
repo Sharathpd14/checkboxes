@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkboxes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <style>
+    :root {
+      --bg: #1f1552;
+      --bg2: #662a82;
+      --glass: rgba(255, 255, 255, 0.14);
+      --line: rgba(255, 255, 255, 0.28);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.82);
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+      --header: rgba(21, 11, 61, 0.56);
+      --btn: #ffffff;
+      --btnText: #2d1d62;
+      --font: 'Poppins', sans-serif;
+      --dot-off: rgba(255, 255, 255, 0.14);
+      --dot-off-border: rgba(255, 255, 255, 0.24);
+      --dot-on-1: #ff8ae2;
+      --dot-on-2: #c45bff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, #a04ab4 0%, rgba(160, 74, 180, 0.2) 18%, transparent 34%),
+        linear-gradient(180deg, #311b79 0%, #29186d 35%, #201356 100%);
+      overflow: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      padding: 18px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--header);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .userbox {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 16px;
+    }
+
+    .logout-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: #fff;
+      color: #2d1d62;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .logout-btn:active {
+      transform: scale(0.97);
+    }
+
+    .grid-panel {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .loading {
+      display: none;
+    }
+
+    .checkbox-grid {
+      display: grid;
+      gap: 10px;
+      width: 100%;
+      align-content: stretch;
+      justify-content: stretch;
+    }
+
+    .checkbox-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .checkbox-cell input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      cursor: pointer;
+      border-radius: 50%;
+      background: var(--dot-off);
+      border: 1.5px solid var(--dot-off-border);
+      transition:
+        background 0.25s ease,
+        transform 0.18s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+    }
+
+    .checkbox-cell input:hover {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: rgba(255, 255, 255, 0.42);
+      transform: scale(1.04);
+    }
+
+    .checkbox-cell input:checked {
+      background: linear-gradient(180deg, var(--dot-on-1) 0%, var(--dot-on-2) 100%);
+      border-color: rgba(255, 255, 255, 0.92);
+      box-shadow:
+        0 0 0 3px rgba(255, 138, 226, 0.12),
+        0 0 14px rgba(196, 91, 255, 0.38);
+    }
+
+    .checkbox-cell input:active {
+      transform: scale(0.9);
+    }
+
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .userbox {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .brand {
+        font-size: 20px;
+      }
+
+      .grid-panel {
+        padding: 12px;
+      }
+
+      .checkbox-grid {
+        gap: 8px;
+      }
+
+      .checkbox-cell input {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">1 Million Checkboxes</div>
+      <div class="userbox">
+        <span id="userName">Loading...</span>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <section class="grid-panel">
+      <div id="loading" class="loading"></div>
+      <div id="grid" class="checkbox-grid" hidden></div>
+    </section>
+  </main>
+
+  <script>
+    const state = { bits: [], cols: 1, rows: 1 };
+    const grid = document.getElementById('grid');
+    const loading = document.getElementById('loading');
+    const userName = document.getElementById('userName');
+    const logoutBtn = document.getElementById('logoutBtn');
+    let socket;
+
+    async function api(url, options = {}) {
+      const res = await fetch(url, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        ...options
+      });
+
+      const data = await res.json();
+
+      if (res.status === 401) {
+        window.location.href = '/login';
+        throw new Error('Unauthorized');
+      }
+
+      return data;
+    }
+
+
+
+    function computeLayout(count) {
+      const cols = 40;
+      const rows = Math.ceil(count / cols);
+
+      state.cols = cols;
+      state.rows = rows;
+
+      grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+      grid.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+    }
+
+    function renderGrid() {
+      computeLayout(state.bits.length);
+      grid.innerHTML = '';
+
+      state.bits.forEach((checked, index) => {
+        const cell = document.createElement('div');
+        cell.className = 'checkbox-cell';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !!checked;
+        input.dataset.index = index;
+        input.addEventListener('change', () => toggleCheckbox(index));
+
+        cell.appendChild(input);
+        grid.appendChild(cell);
+      });
+
+      loading.hidden = true;
+      grid.hidden = false;
+    }
+
+    function patchCheckbox(index, checked) {
+      state.bits[index] = checked ? 1 : 0;
+      const input = grid.querySelector(`input[data-index="${index}"]`);
+      if (input) input.checked = checked;
+    }
+
+    function connectSocket() {
+      socket = io({ withCredentials: true });
+
+      socket.on('connect_error', () => {
+        window.location.href = '/login';
+      });
+
+      socket.on('checkbox:updated', (payload) => {
+        patchCheckbox(payload.index, payload.checked);
+      });
+    }
+
+    async function toggleCheckbox(index) {
+      socket.emit('checkbox:toggle', { index }, (res) => {
+        if (!res || !res.ok) {
+          alert(res?.error || 'Unable to update checkbox');
+          patchCheckbox(index, state.bits[index]);
+          return;
+        }
+        patchCheckbox(res.index, res.checked);
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (state.bits.length) renderGrid();
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await api('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login';
+    });
+
+    (async () => {
+      const me = await api('/api/auth/me');
+      if (!me.authenticated) {
+        window.location.href = '/login';
+        return;
+      }
+
+      userName.textContent = me.user.name;
+
+      const gridData = await api('/api/grid/visible');
+      state.bits = gridData.bits;
+
+      renderGrid();
+      connectSocket();
+    })();
+  </script>
+</body>
+
+</html>

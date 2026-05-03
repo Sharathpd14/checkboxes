@@ -1,0 +1,10 @@
+{
+  "name": "final-checkbox-auth-app",
+  "private": true,
+  "workspaces": ["backend"],
+  "scripts": {
+    "install:all": "npm install && npm install --workspace backend",
+    "dev": "npm run dev --workspace backend",
+    "start": "npm run start --workspace backend"
+  }
+}
