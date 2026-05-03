@@ -427,7 +427,7 @@
         userName.textContent = me.user.name;
 
         const gridData = await api('/api/grid/visible');
-        state.bits = (gridData.bits || []).slice(0, 720);
+        state.bits = (gridData.bits || []).slice(0, 820);
 
         renderGrid();
         connectSocket();
