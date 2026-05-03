@@ -9,12 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script defer src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+
   <style>
     :root {
       --bg: #1f1552;
       --bg2: #662a82;
       --glass: rgba(255, 255, 255, 0.14);
-      --line: rgba(255, 255, 255, 0.28);
+      --line: rgba(255, 255, 255, 0.22);
       --text: #ffffff;
       --muted: rgba(255, 255, 255, 0.82);
       --shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
@@ -34,17 +35,17 @@
 
     html,
     body {
-      height: 100%;
+      min-height: 100%;
+      margin: 0;
     }
 
     body {
-      margin: 0;
       font-family: var(--font);
       color: var(--text);
       background:
         radial-gradient(circle at top, #a04ab4 0%, rgba(160, 74, 180, 0.2) 18%, transparent 34%),
         linear-gradient(180deg, #311b79 0%, #29186d 35%, #201356 100%);
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     a {
@@ -54,17 +55,18 @@
 
     .app-shell {
       min-height: 100vh;
-      padding: 18px 18px 20px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 20px;
+      gap: 16px;
+      padding: 18px 20px;
       border: 1px solid var(--line);
       border-radius: 22px;
       background: var(--header);
@@ -72,17 +74,39 @@
       box-shadow: var(--shadow);
     }
 
+    .brand-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+    }
+
     .brand {
       font-size: 24px;
       font-weight: 700;
       letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
     }
 
     .userbox {
       display: flex;
       align-items: center;
-      gap: 16px;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+
+    .username {
       font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+      word-break: break-word;
     }
 
     .logout-btn {
@@ -94,6 +118,7 @@
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.18s ease, box-shadow 0.18s ease;
+      min-height: 44px;
     }
 
     .logout-btn:hover {
@@ -107,37 +132,36 @@
 
     .grid-panel {
       flex: 1;
+      min-height: 0;
       border: 1px solid var(--line);
-      border-radius: 28px;
+      border-radius: 24px;
       background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.08));
       backdrop-filter: blur(12px);
       box-shadow: var(--shadow);
-      padding: 18px;
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
-      min-height: 0;
-      overflow: hidden;
+      padding: 16px;
+      overflow: auto;
     }
 
     .loading {
-      display: none;
+      min-height: 200px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 16px;
     }
 
     .checkbox-grid {
       display: grid;
-      gap: 10px;
       width: 100%;
-      align-content: stretch;
-      justify-content: stretch;
+      gap: 10px;
+      margin-top: 10px;
+      align-content: start;
     }
 
     .checkbox-cell {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      border: none;
       min-width: 0;
       min-height: 0;
     }
@@ -178,23 +202,43 @@
     }
 
     @media (max-width: 768px) {
+      .app-shell {
+        padding: 12px;
+        gap: 12px;
+      }
+
       .topbar {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        align-items: stretch;
+        padding: 16px;
+      }
+
+      .brand {
+        font-size: 18px;
+      }
+
+      .subtitle {
+        font-size: 13px;
       }
 
       .userbox {
         width: 100%;
         justify-content: space-between;
+        align-items: center;
       }
 
-      .brand {
-        font-size: 20px;
+      .username {
+        font-size: 15px;
+      }
+
+      .logout-btn {
+        padding: 10px 16px;
+        min-width: 110px;
       }
 
       .grid-panel {
         padding: 12px;
+        border-radius: 20px;
       }
 
       .checkbox-grid {
@@ -206,21 +250,50 @@
         height: 16px;
       }
     }
+
+    @media (max-width: 480px) {
+      .topbar {
+        gap: 12px;
+      }
+
+      .userbox {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .logout-btn {
+        width: 100%;
+      }
+
+      .checkbox-grid {
+        gap: 7px;
+      }
+
+      .checkbox-cell input {
+        width: 14px;
+        height: 14px;
+      }
+    }
   </style>
 </head>
 
 <body>
   <main class="app-shell">
     <header class="topbar">
-      <div class="brand">1 Million Checkboxes</div>
+      <div class="brand-wrap">
+        <div class="brand">1 Million Checkboxes</div>
+        <div class="subtitle">Realtime shared checkbox board</div>
+      </div>
+
       <div class="userbox">
-        <span id="userName">Loading...</span>
+        <span id="userName" class="username">Loading...</span>
         <button id="logoutBtn" class="logout-btn">Logout</button>
       </div>
     </header>
 
     <section class="grid-panel">
-      <div id="loading" class="loading"></div>
+      <!-- <div id="loading" class="loading">Loading checkboxes...</div> -->
       <div id="grid" class="checkbox-grid" hidden></div>
     </section>
   </main>
@@ -250,17 +323,24 @@
       return data;
     }
 
+    function getColumnCount() {
+      const width = window.innerWidth;
 
+      if (width <= 480) return 8;
+      if (width <= 768) return 12;
+      if (width <= 1024) return 20;
+      return 40;
+    }
 
     function computeLayout(count) {
-      const cols = 40;
+      const cols = getColumnCount();
       const rows = Math.ceil(count / cols);
 
       state.cols = cols;
       state.rows = rows;
 
       grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-      grid.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
+      grid.style.gridTemplateRows = `repeat(${rows}, minmax(0, auto))`;
     }
 
     function renderGrid() {
@@ -275,6 +355,7 @@
         input.type = 'checkbox';
         input.checked = !!checked;
         input.dataset.index = index;
+        input.setAttribute('aria-label', `Checkbox ${index + 1}`);
         input.addEventListener('change', () => toggleCheckbox(index));
 
         cell.appendChild(input);
@@ -303,40 +384,59 @@
       });
     }
 
-    async function toggleCheckbox(index) {
+    function toggleCheckbox(index) {
+      const previous = !!state.bits[index];
+      patchCheckbox(index, !previous);
+
       socket.emit('checkbox:toggle', { index }, (res) => {
         if (!res || !res.ok) {
+          patchCheckbox(index, previous);
           alert(res?.error || 'Unable to update checkbox');
-          patchCheckbox(index, state.bits[index]);
           return;
         }
+
         patchCheckbox(res.index, res.checked);
       });
     }
 
+    let resizeTimer;
     window.addEventListener('resize', () => {
-      if (state.bits.length) renderGrid();
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (state.bits.length) renderGrid();
+      }, 120);
     });
 
     logoutBtn.addEventListener('click', async () => {
-      await api('/api/auth/logout', { method: 'POST' });
+      try {
+        await api('/api/auth/logout', { method: 'POST' });
+      } catch (error) {
+      }
       window.location.href = '/login';
     });
 
     (async () => {
-      const me = await api('/api/auth/me');
-      if (!me.authenticated) {
-        window.location.href = '/login';
-        return;
+      try {
+        const me = await api('/api/auth/me');
+
+        if (!me.authenticated) {
+          window.location.href = '/login';
+          return;
+        }
+
+        userName.textContent = me.user.name;
+
+        const gridData = await api('/api/grid/visible');
+        state.bits = (gridData.bits || []).slice(0, 720);
+
+        renderGrid();
+        connectSocket();
+      } catch (error) {
+        loading.textContent = 'Failed to load app.';
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1200);
       }
-
-      userName.textContent = me.user.name;
-
-      const gridData = await api('/api/grid/visible');
-      state.bits = gridData.bits;
-
-      renderGrid();
-      connectSocket();
     })();
   </script>
 </body>
